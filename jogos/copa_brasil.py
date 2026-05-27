@@ -1,6 +1,29 @@
 import random
 from jogos.jogo import Jogo
 
+# Nesse código possuimos 3 classes fundamentais para o funicionamento:
+# - Classe Time
+#   Representa um time participante da Copa do Brasil.
+#   Responsabilidades:
+#       - Armazenar o nome do time
+#       - Armazenar a força do time, usada na simulação das partidas
+# - Classe Partida
+#   Representa uma partida entre dois times.
+#   Responsabilidades:
+#       - Guardar os dois times participantes
+#       - Simular o resultado da partida
+#       - Definir vencedor e perdedor
+#       - Armazenar placar e possível disputa de pênaltis
+# - Classe CopaDoBrasil
+#   Representa o modo de aposta esportiva baseado em mata-mata.
+#   Responsabilidades:
+#       - Criar os times participantes
+#       - Embaralhar os confrontos
+#       - Simular quartas, semifinal e final
+#       - Calcular odds conforme o tipo de aposta
+#       - Verificar se a aposta do jogador foi vencedora
+#       - Registrar a aposta no histórico do jogador
+
 class Time:
     def __init__(self, nome, forca):
         self.nome = nome

@@ -1,14 +1,15 @@
 from jogos.jogo import Jogo
 import random
 
-# Classe Roleta
-# Implementa o jogo de roleta do cassino.
-# Oq ele faz:
-# - Sortear um número entre 0 e 36
-# - Determinar cor, paridade e faixa do número
-# - Validar apostas do jogador
-# - Calcular ganhos ou perdas
-# - Atualizar saldo e registrar histórico
+# - Classe Roleta
+#   Representa o jogo de roleta do cassino.
+#   Responsabilidades:
+#       - Sortear um número entre 0 e 36
+#       - Determinar a cor, a paridade e a faixa do número sorteado
+#       - Validar os diferentes tipos de aposta do jogador
+#       - Calcular o resultado da aposta e o valor do prêmio
+#       - Atualizar o saldo do jogador em caso de vitória
+#       - Registrar o histórico das jogadas realizadas
 
 class Roleta(Jogo):
     def __init__(self, nome="Roleta", aposta_minima=10):
@@ -36,12 +37,13 @@ class Roleta(Jogo):
             return "impar"
 
     def faixa_numero(self, numero):
-        if 1 <= numero <= 18:
-            return "1-18"
-        elif 19 <= numero <= 36:
-            return "19-36"
-        else:
+        if numero == 0:
             return "nenhuma"
+
+        inicio = ((numero - 1) // 4) * 4 + 1
+        fim = inicio + 3
+
+        return f"{inicio}-{fim}"
 
     def validar_aposta(self, tipo_aposta, escolha):
         if tipo_aposta == "numero":
@@ -58,7 +60,8 @@ class Roleta(Jogo):
             return escolha in ["par", "impar"]
 
         elif tipo_aposta == "faixa":
-            return escolha in ["1-18", "19-36"]
+            return escolha in ["1-4", "5-8", "9-12", "13-16", "17-20", "21-24",
+        "25-28", "29-32", "33-36"]
 
         return False
 
@@ -99,7 +102,7 @@ class Roleta(Jogo):
         elif tipo_aposta == "faixa":
             if escolha == faixa_sorteada:
                 ganhou = True
-                premio = valor_aposta * 2
+                premio = valor_aposta * 9
 
         if ganhou:
             jogador.receber_premio(premio)

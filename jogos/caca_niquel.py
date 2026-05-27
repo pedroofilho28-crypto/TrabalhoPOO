@@ -1,14 +1,16 @@
 from jogos.jogo import Jogo
 import random
 
-# Classe CacaNiquel
-# Implementa o jogo de caça-níquel em grade 3x3.
-# Oq faz:
-# - Sortear símbolos em uma matriz 3x3
-# - Verificar prêmios nas 3 linhas horizontais
-# - Aplicar bônus especiais
-# - Controlar jackpot acumulado
-# - Registrar histórico das jogadas
+# - Classe CacaNiquel
+#   Representa o jogo de caça-níquel do cassino em formato 3x3.
+#   Responsabilidades:
+#       - Sortear símbolos em uma matriz 3x3
+#       - Verificar combinações vencedoras em linhas, colunas e diagonais
+#       - Calcular prêmios conforme os símbolos sorteados
+#       - Aplicar bônus especiais, como rodada grátis e bônus multilinha
+#       - Controlar o jackpot acumulado
+#       - Atualizar o saldo do jogador em caso de vitória
+#       - Registrar o histórico das jogadas realizadas
 
 class CacaNiquel(Jogo):
     def __init__(self, nome="Caça-Níquel", aposta_minima=5):
