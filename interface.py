@@ -479,18 +479,18 @@ class InterfaceCassino:
         messagebox.showinfo("Salvo", "Jogo salvo com sucesso!")
 
     def tela_deposito(self):
-        self.limpar_area()
+        area = self.criar_area_rolavel()
 
         tk.Label(
-            self.frame_conteudo,
+            area,
             text="DEPÓSITO",
             font=("Times New Roman", 24, "bold"),
             bg="#145214",
             fg="gold"
         ).pack(pady=20)
 
-        frame_madeira = tk.Frame(self.frame_conteudo, bg="#6b3e0a")
-        frame_madeira.pack(pady=20)
+        frame_madeira = tk.Frame(area, bg="#6b3e0a")
+        frame_madeira.pack(pady=20, padx=20)
 
         frame_ouro = tk.Frame(frame_madeira, bg="#d4af37")
         frame_ouro.pack(padx=5, pady=5)
@@ -506,13 +506,14 @@ class InterfaceCassino:
             fg="gold"
         ).pack(pady=(0, 15))
 
-        tk.Label(
+        saldo_label = tk.Label(
             frame_painel,
             text=f"Saldo atual: R$ {self.jogador.saldo:.2f}",
             font=("Arial", 14, "bold"),
             bg="#2b1a05",
             fg="white"
-        ).pack(pady=10)
+        )
+        saldo_label.pack(pady=10)
 
         tk.Label(
             frame_painel,
@@ -542,22 +543,36 @@ class InterfaceCassino:
         resultado_label.pack(pady=10)
 
         def confirmar_deposito():
+            texto = entrada_valor.get().replace(",", ".")
+
             try:
-                valor = float(entrada_valor.get())
+                valor = float(texto)
             except ValueError:
                 messagebox.showerror("Erro", "Digite um valor válido.")
                 return
 
-            if not self.jogador.depositar(valor):
-                messagebox.showwarning("Aviso", "O valor do depósito precisa ser maior que zero.")
+            if valor <= 0:
+                messagebox.showwarning(
+                    "Aviso",
+                    "O valor do depósito precisa ser maior que zero."
+                )
                 return
+
+            self.jogador.depositar(valor)
 
             self.atualizar_saldo()
             salvar_jogador(self.jogador)
+
+            saldo_label.config(
+                text=f"Saldo atual: R$ {self.jogador.saldo:.2f}"
+            )
+
             resultado_label.config(
                 text=f"Depósito de R$ {valor:.2f} realizado com sucesso!",
                 fg="gold"
             )
+
+            entrada_valor.delete(0, tk.END)
 
         tk.Button(
             frame_painel,
@@ -574,19 +589,34 @@ class InterfaceCassino:
             width=20
         ).pack(pady=15)
 
+        tk.Button(
+            frame_painel,
+            text="Voltar ao Menu",
+            font=("Arial", 12, "bold"),
+            command=self.tela_menu_carteira,
+            bg="#6b3e0a",
+            fg="white",
+            activebackground="#8b5a16",
+            activeforeground="white",
+            bd=3,
+            relief="raised",
+            cursor="hand2",
+            width=20
+        ).pack(pady=(5, 0))
+
     def tela_saque(self):
-        self.limpar_area()
+        area = self.criar_area_rolavel()
 
         tk.Label(
-            self.frame_conteudo,
+            area,
             text="SAQUE",
             font=("Times New Roman", 24, "bold"),
             bg="#145214",
             fg="gold"
         ).pack(pady=20)
 
-        frame_madeira = tk.Frame(self.frame_conteudo, bg="#6b3e0a")
-        frame_madeira.pack(pady=20)
+        frame_madeira = tk.Frame(area, bg="#6b3e0a")
+        frame_madeira.pack(pady=20, padx=20)
 
         frame_ouro = tk.Frame(frame_madeira, bg="#d4af37")
         frame_ouro.pack(padx=5, pady=5)
@@ -602,13 +632,14 @@ class InterfaceCassino:
             fg="gold"
         ).pack(pady=(0, 15))
 
-        tk.Label(
+        saldo_label = tk.Label(
             frame_painel,
             text=f"Saldo atual: R$ {self.jogador.saldo:.2f}",
             font=("Arial", 14, "bold"),
             bg="#2b1a05",
             fg="white"
-        ).pack(pady=10)
+        )
+        saldo_label.pack(pady=10)
 
         tk.Label(
             frame_painel,
@@ -638,22 +669,43 @@ class InterfaceCassino:
         resultado_label.pack(pady=10)
 
         def confirmar_saque():
+            texto = entrada_valor.get().replace(",", ".")
+
             try:
-                valor = float(entrada_valor.get())
+                valor = float(texto)
             except ValueError:
                 messagebox.showerror("Erro", "Digite um valor válido.")
                 return
 
-            if not self.jogador.sacar(valor):
-                messagebox.showwarning("Aviso", "Saque inválido ou saldo insuficiente.")
+            if valor <= 0:
+                messagebox.showwarning(
+                    "Aviso",
+                    "O valor do saque precisa ser maior que zero."
+                )
                 return
+
+            if valor > self.jogador.saldo:
+                messagebox.showwarning(
+                    "Aviso",
+                    "Saldo insuficiente para realizar o saque."
+                )
+                return
+
+            self.jogador.sacar(valor)
 
             self.atualizar_saldo()
             salvar_jogador(self.jogador)
+
+            saldo_label.config(
+                text=f"Saldo atual: R$ {self.jogador.saldo:.2f}"
+            )
+
             resultado_label.config(
                 text=f"Saque de R$ {valor:.2f} realizado com sucesso!",
                 fg="gold"
             )
+
+            entrada_valor.delete(0, tk.END)
 
         tk.Button(
             frame_painel,
@@ -669,6 +721,21 @@ class InterfaceCassino:
             cursor="hand2",
             width=20
         ).pack(pady=15)
+
+        tk.Button(
+            frame_painel,
+            text="Voltar ao Menu",
+            font=("Arial", 12, "bold"),
+            command=self.tela_menu_carteira,
+            bg="#6b3e0a",
+            fg="white",
+            activebackground="#8b5a16",
+            activeforeground="white",
+            bd=3,
+            relief="raised",
+            cursor="hand2",
+            width=20
+        ).pack(pady=(5, 0))
 
     def mostrar_historico(self):
         area = self.criar_area_rolavel()
