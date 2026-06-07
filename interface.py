@@ -424,6 +424,52 @@ class InterfaceCassino:
         for widget in self.frame_conteudo.winfo_children():
             widget.destroy()
 
+    def criar_area_rolavel(self):
+        self.limpar_area()
+
+        canvas = tk.Canvas(
+            self.frame_conteudo,
+            bg="#145214",
+            highlightthickness=0
+        )
+        canvas.pack(side="left", fill="both", expand=True)
+
+        scrollbar = tk.Scrollbar(
+            self.frame_conteudo,
+            orient="vertical",
+            command=canvas.yview
+        )
+        scrollbar.pack(side="right", fill="y")
+
+        area = tk.Frame(canvas, bg="#145214")
+
+        janela = canvas.create_window(
+            (0, 0),
+            window=area,
+            anchor="nw"
+        )
+
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        def ajustar_area(event):
+            canvas.itemconfig(janela, width=event.width)
+            canvas.configure(scrollregion=canvas.bbox("all"))
+
+        def atualizar_scroll(event):
+            canvas.configure(scrollregion=canvas.bbox("all"))
+
+        canvas.bind("<Configure>", ajustar_area)
+        area.bind("<Configure>", atualizar_scroll)
+
+        def rolar_mouse(event):
+            if canvas.winfo_exists():
+                canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+
+        canvas.bind("<MouseWheel>", rolar_mouse)
+        area.bind("<MouseWheel>", rolar_mouse)
+
+        return area
+
     def salvar_jogo(self):
         if self.jogador is None:
             messagebox.showwarning("Aviso", "Nenhum jogador para salvar.")
@@ -625,17 +671,17 @@ class InterfaceCassino:
         ).pack(pady=15)
 
     def mostrar_historico(self):
-        self.limpar_area()
+        area = self.criar_area_rolavel()
 
         tk.Label(
-            self.frame_conteudo,
+            area,
             text="HISTÓRICO DE JOGADAS",
             font=("Times New Roman", 24, "bold"),
             bg="#145214",
             fg="gold"
         ).pack(pady=20)
 
-        frame_madeira = tk.Frame(self.frame_conteudo, bg="#6b3e0a")
+        frame_madeira = tk.Frame(area, bg="#6b3e0a")
         frame_madeira.pack(pady=10, padx=20, fill="both", expand=True)
 
         frame_ouro = tk.Frame(frame_madeira, bg="#d4af37")
@@ -709,10 +755,10 @@ class InterfaceCassino:
             self.mostrar_historico()
 
     def tela_roleta(self):
-        self.limpar_area()
+        area = self.criar_area_rolavel()
 
         titulo = tk.Label(
-            self.frame_conteudo,
+            area,
             text="ROLETA",
             font=("Arial", 20, "bold"),
             bg="#145214",
@@ -721,18 +767,18 @@ class InterfaceCassino:
         titulo.pack(pady=10)
 
         tk.Label(
-            self.frame_conteudo,
+            area,
             text="Valor da aposta:",
             font=("Arial", 12),
             bg="#145214",
             fg="white"
         ).pack()
 
-        entrada_aposta = tk.Entry(self.frame_conteudo, font=("Arial", 12))
+        entrada_aposta = tk.Entry(area, font=("Arial", 12))
         entrada_aposta.pack(pady=5)
 
         self.btn_girar_roleta = tk.Button(
-            self.frame_conteudo,
+            area,
             text="Girar Roleta",
             font=("Arial", 14, "bold"),
             bg="#8b0000",
@@ -746,7 +792,7 @@ class InterfaceCassino:
         self.btn_girar_roleta.pack(pady=10)
 
         tk.Label(
-            self.frame_conteudo,
+            area,
             text="Tipo de aposta:",
             font=("Arial", 12),
             bg="#145214",
@@ -755,30 +801,33 @@ class InterfaceCassino:
 
         tipo_var = tk.StringVar(value="numero")
 
-        frame_tipos = tk.Frame(self.frame_conteudo, bg="#145214")
+        frame_tipos = tk.Frame(area, bg="#145214")
         frame_tipos.pack(pady=5)
 
         tk.Radiobutton(frame_tipos, text="Número", variable=tipo_var, value="numero",
                     bg="#145214", fg="white", selectcolor="#145214").grid(row=0, column=0, padx=5)
+
         tk.Radiobutton(frame_tipos, text="Cor", variable=tipo_var, value="cor",
                     bg="#145214", fg="white", selectcolor="#145214").grid(row=0, column=1, padx=5)
+
         tk.Radiobutton(frame_tipos, text="Paridade", variable=tipo_var, value="paridade",
                     bg="#145214", fg="white", selectcolor="#145214").grid(row=0, column=2, padx=5)
+
         tk.Radiobutton(frame_tipos, text="Faixa", variable=tipo_var, value="faixa",
                     bg="#145214", fg="white", selectcolor="#145214").grid(row=0, column=3, padx=5)
 
         tk.Label(
-            self.frame_conteudo,
+            area,
             text="Escolha:",
             font=("Arial", 12),
             bg="#145214",
             fg="white"
         ).pack()
 
-        entrada_escolha = tk.Entry(self.frame_conteudo, font=("Arial", 12))
+        entrada_escolha = tk.Entry(area, font=("Arial", 12))
         entrada_escolha.pack(pady=5)
 
-        frame_roleta_madeira = tk.Frame(self.frame_conteudo, bg="#6b3e0a")
+        frame_roleta_madeira = tk.Frame(area, bg="#6b3e0a")
         frame_roleta_madeira.pack(pady=15)
 
         frame_roleta_ouro = tk.Frame(frame_roleta_madeira, bg="#d4af37")
@@ -818,7 +867,7 @@ class InterfaceCassino:
         cor_label.pack(pady=(5, 0))
 
         info_label = tk.Label(
-            self.frame_conteudo,
+            area,
             text="",
             font=("Arial", 14),
             bg="#145214",
@@ -905,7 +954,7 @@ class InterfaceCassino:
                         winsound.Beep(400, 200)
 
                     self.atualizar_saldo()
-                    self.btn_girar_roleta.config(text="Girando...", state="normal")
+                    self.btn_girar_roleta.config(text="Girar Roleta", state="normal")
 
             loop()
 
@@ -928,7 +977,7 @@ class InterfaceCassino:
             if "erro" in resultado:
                 messagebox.showerror("Erro", resultado["erro"])
                 return
-            
+
             salvar_jogador(self.jogador)
 
             info_label.config(text="Girando a roleta...", fg="white")
@@ -938,10 +987,10 @@ class InterfaceCassino:
         self.btn_girar_roleta.config(command=jogar_roleta)
 
     def tela_caca_niquel(self):
-        self.limpar_area()
+        area = self.criar_area_rolavel()
 
         titulo = tk.Label(
-            self.frame_conteudo,
+            area,
             text="CAÇA-NÍQUEL",
             font=("Times New Roman", 24, "bold"),
             bg="#145214",
@@ -949,12 +998,16 @@ class InterfaceCassino:
         )
         titulo.pack(pady=10)
 
-        frame_principal = tk.Frame(self.frame_conteudo, bg="#145214")
+        frame_principal = tk.Frame(area, bg="#145214")
         frame_principal.pack(fill="both", expand=True, padx=20, pady=10)
 
         #lado esq
-        frame_esquerda = tk.Frame(self.frame_principal if hasattr(self, 'frame_principal') else frame_principal, bg="#145214")
+        frame_esquerda = tk.Frame(frame_principal if hasattr(self, 'frame_principal') else frame_principal, bg="#145214")
         frame_esquerda.pack(side="left", fill="y", padx=(0, 25))
+
+        # lado dir
+        frame_direita = tk.Frame(frame_principal, bg="#145214")
+        frame_direita.pack(side="right", fill="both", expand=True)
 
         jackpot_box = tk.Frame(frame_esquerda, bg="#2b1a05", bd=3, relief="ridge")
         jackpot_box.pack(pady=8, fill="x")
@@ -1032,9 +1085,6 @@ class InterfaceCassino:
         )
         ultimo_premio_label.pack()
 
-        #lado dir
-        frame_direita = tk.Frame(frame_principal, bg="#145214")
-        frame_direita.pack(side="right", fill="both", expand=True)
 
         frame_madeira = tk.Frame(frame_direita, bg="#6b3e0a")
         frame_madeira.pack(pady=20)
@@ -1280,10 +1330,10 @@ class InterfaceCassino:
             animar_slots(resultado, valor)
             
     def tela_copa_brasil(self):
-        self.limpar_area()
+        area = self.criar_area_rolavel()
 
         titulo = tk.Label(
-            self.frame_conteudo,
+            area,
             text="COPA DO BRASIL",
             font=("Arial", 20, "bold"),
             bg="#145214",
@@ -1291,7 +1341,7 @@ class InterfaceCassino:
         )
         titulo.pack(pady=10)
 
-        frame_principal = tk.Frame(self.frame_conteudo, bg="#145214")
+        frame_principal = tk.Frame(area, bg="#145214")
         frame_principal.pack(fill="both", expand=True, padx=20, pady=10)
 
         frame_esquerda = tk.Frame(frame_principal, bg="#145214")
@@ -1300,14 +1350,24 @@ class InterfaceCassino:
         frame_direita = tk.Frame(frame_principal, bg="#145214")
         frame_direita.pack(side="right", fill="both", expand=True)
 
-        tk.Label(frame_esquerda, text="Valor da aposta:", font=("Arial", 12),
-                bg="#145214", fg="white").pack()
+        tk.Label(
+            frame_esquerda,
+            text="Valor da aposta:",
+            font=("Arial", 12),
+            bg="#145214",
+            fg="white"
+        ).pack()
 
         entrada_aposta = tk.Entry(frame_esquerda, font=("Arial", 12), width=18)
         entrada_aposta.pack(pady=5)
 
-        tk.Label(frame_esquerda, text="Escolha o time:", font=("Arial", 12),
-                bg="#145214", fg="white").pack(pady=(10, 5))
+        tk.Label(
+            frame_esquerda,
+            text="Escolha o time:",
+            font=("Arial", 12),
+            bg="#145214",
+            fg="white"
+        ).pack(pady=(10, 5))
 
         nomes_times = [time.nome for time in self.copa_brasil.times]
         time_var = tk.StringVar(value=nomes_times[0])
@@ -1316,8 +1376,13 @@ class InterfaceCassino:
         menu_times.config(font=("Arial", 12), bg="white", width=14)
         menu_times.pack(pady=5)
 
-        tk.Label(frame_esquerda, text="Odds dos times:", font=("Arial", 12, "bold"),
-                bg="#145214", fg="gold").pack(pady=(12, 5))
+        tk.Label(
+            frame_esquerda,
+            text="Odds dos times:",
+            font=("Arial", 12, "bold"),
+            bg="#145214",
+            fg="gold"
+        ).pack(pady=(12, 5))
 
         frame_odds = tk.Frame(frame_esquerda, bg="#2b1a05", bd=3, relief="ridge")
         frame_odds.pack(pady=5, padx=5)
@@ -1332,7 +1397,6 @@ class InterfaceCassino:
 
         for i, time in enumerate(self.copa_brasil.times):
             odd = self.copa_brasil.calcular_odd(time)
-
             texto = f"{time.nome}: {odd:.1f}"
 
             tk.Label(
@@ -1350,20 +1414,48 @@ class InterfaceCassino:
                 pady=2
             )
 
-        tk.Label(frame_esquerda, text="Tipo de aposta:", font=("Arial", 12),
-                bg="#145214", fg="white").pack(pady=(12, 5))
+        tk.Label(
+            frame_esquerda,
+            text="Tipo de aposta:",
+            font=("Arial", 12),
+            bg="#145214",
+            fg="white"
+        ).pack(pady=(12, 5))
 
         tipo_var = tk.StringVar(value="campeao")
 
         frame_tipos = tk.Frame(frame_esquerda, bg="#145214")
         frame_tipos.pack(pady=5)
 
-        tk.Radiobutton(frame_tipos, text="Campeão", variable=tipo_var, value="campeao",
-                    bg="#145214", fg="white", selectcolor="#145214").pack(anchor="w")
-        tk.Radiobutton(frame_tipos, text="Finalista", variable=tipo_var, value="finalista",
-                    bg="#145214", fg="white", selectcolor="#145214").pack(anchor="w")
-        tk.Radiobutton(frame_tipos, text="Semifinalista", variable=tipo_var, value="semifinalista",
-                    bg="#145214", fg="white", selectcolor="#145214").pack(anchor="w")
+        tk.Radiobutton(
+            frame_tipos,
+            text="Campeão",
+            variable=tipo_var,
+            value="campeao",
+            bg="#145214",
+            fg="white",
+            selectcolor="#145214"
+        ).pack(anchor="w")
+
+        tk.Radiobutton(
+            frame_tipos,
+            text="Finalista",
+            variable=tipo_var,
+            value="finalista",
+            bg="#145214",
+            fg="white",
+            selectcolor="#145214"
+        ).pack(anchor="w")
+
+        tk.Radiobutton(
+            frame_tipos,
+            text="Semifinalista",
+            variable=tipo_var,
+            value="semifinalista",
+            bg="#145214",
+            fg="white",
+            selectcolor="#145214"
+        ).pack(anchor="w")
 
         btn_simular = tk.Button(
             frame_esquerda,
@@ -1380,11 +1472,10 @@ class InterfaceCassino:
         )
         btn_simular.pack(pady=15)
 
-
         canvas_chave = tk.Canvas(
             frame_direita,
-            width=680,
-            height=430,
+            width=640,
+            height=410,
             bg="#0f4a1f",
             highlightthickness=2,
             highlightbackground="gold"
@@ -1398,7 +1489,7 @@ class InterfaceCassino:
             bg="#145214",
             fg="white",
             justify="center",
-            wraplength=620
+            wraplength=580
         )
         resumo_label.pack(pady=8)
 
@@ -1418,28 +1509,29 @@ class InterfaceCassino:
                 cor_texto = "black" if vencedor else "white"
 
                 canvas_chave.create_rectangle(
-                    x, y, x + 185, y + 38,
+                    x, y, x + 175, y + 38,
                     fill=cor_fundo,
                     outline="gold",
                     width=2
                 )
+
                 canvas_chave.create_text(
-                    x + 92,
+                    x + 87,
                     y + 19,
                     text=texto,
                     fill=cor_texto,
-                    font=("Arial", 9, "bold"),
-                    width=175
+                    font=("Arial", 8, "bold"),
+                    width=165
                 )
 
             def linha(x1, y1, x2, y2):
                 canvas_chave.create_line(x1, y1, x2, y2, fill="gold", width=2)
 
             canvas_chave.create_text(
-                340, 25,
+                320, 25,
                 text="🏆 CHAVEAMENTO DA COPA 🏆",
                 fill="gold",
-                font=("Times New Roman", 18, "bold")
+                font=("Times New Roman", 17, "bold")
             )
 
             quartas = resultado["quartas"]
@@ -1447,29 +1539,28 @@ class InterfaceCassino:
             final = resultado["final"]
             campeao = resultado["campeao"]
 
-            y_quartas = [70, 150, 230, 310]
+            y_quartas = [70, 145, 220, 295]
             for i, partida in enumerate(quartas):
                 caixa(20, y_quartas[i], texto_partida(partida))
 
-            y_semis = [110, 270]
+            y_semis = [105, 255]
             for i, partida in enumerate(semi):
-                caixa(250, y_semis[i], texto_partida(partida))
+                caixa(235, y_semis[i], texto_partida(partida))
 
             partida_final = final[0]
-            caixa(475, 190, texto_partida(partida_final))
+            caixa(445, 180, texto_partida(partida_final))
+            caixa(445, 260, f"🏆 {campeao}", vencedor=True)
 
-            caixa(475, 270, f"🏆 {campeao}", vencedor=True)
+            linha(195, 89, 235, 124)
+            linha(195, 164, 235, 124)
 
-            linha(205, 89, 250, 129)
-            linha(205, 169, 250, 129)
+            linha(195, 239, 235, 274)
+            linha(195, 314, 235, 274)
 
-            linha(205, 249, 250, 289)
-            linha(205, 329, 250, 289)
+            linha(410, 124, 445, 199)
+            linha(410, 274, 445, 199)
 
-            linha(435, 129, 475, 209)
-            linha(435, 289, 475, 209)
-
-            linha(567, 228, 567, 270)
+            linha(532, 218, 532, 260)
 
         def mostrar_resumo_aposta(resultado):
             texto = (
@@ -1513,10 +1604,10 @@ class InterfaceCassino:
             mostrar_resumo_aposta(resultado)
 
     def tela_bozo(self):
-        self.limpar_area()
+        area = self.criar_area_rolavel()
 
         titulo = tk.Label(
-            self.frame_conteudo,
+            area,
             text="BOZÓ",
             font=("Times New Roman", 24, "bold"),
             bg="#145214",
@@ -1524,7 +1615,7 @@ class InterfaceCassino:
         )
         titulo.pack(pady=10)
 
-        frame_principal = tk.Frame(self.frame_conteudo, bg="#145214")
+        frame_principal = tk.Frame(area, bg="#145214")
         frame_principal.pack(fill="both", expand=True, padx=20, pady=10)
 
         frame_esquerda = tk.Frame(frame_principal, bg="#145214")

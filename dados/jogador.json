@@ -1,5 +1,12 @@
 {
-    "nome": "gsfhdghfd",
-    "saldo": 543564564.0,
-    "historico": []
+    "nome": "hgsfdhgdf",
+    "saldo": 7757657426.0,
+    "historico": [
+        "Roleta | aposta: R$ 20.00 | tipo: numero | escolha: 1 | sorteado: 36 | resultado: PERDEU | saldo: R$ 7757657526.00",
+        "Roleta | aposta: R$ 20.00 | tipo: numero | escolha: 1 | sorteado: 21 | resultado: PERDEU | saldo: R$ 7757657506.00",
+        "Roleta | aposta: R$ 20.00 | tipo: numero | escolha: 1 | sorteado: 11 | resultado: PERDEU | saldo: R$ 7757657486.00",
+        "Roleta | aposta: R$ 20.00 | tipo: numero | escolha: 1 | sorteado: 23 | resultado: PERDEU | saldo: R$ 7757657466.00",
+        "Roleta | aposta: R$ 20.00 | tipo: numero | escolha: 1 | sorteado: 27 | resultado: PERDEU | saldo: R$ 7757657446.00",
+        "Roleta | aposta: R$ 20.00 | tipo: numero | escolha: 1 | sorteado: 36 | resultado: PERDEU | saldo: R$ 7757657426.00"
+    ]
 }
