@@ -23,7 +23,8 @@ class InterfaceCassino:
     def __init__(self, root):
         self.root = root
         self.root.title("Cassino Python")
-        self.root.geometry("800x600")
+        self.root.geometry("1000x750")
+        self.root.minsize(900, 650)
         self.root.configure(bg="#0b3d0b")
 
         self.jogador = None
