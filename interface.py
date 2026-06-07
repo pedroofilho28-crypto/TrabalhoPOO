@@ -25,6 +25,12 @@ class InterfaceCassino:
         self.root.title("Cassino Python")
         self.root.geometry("1000x750")
         self.root.minsize(900, 650)
+        self.root.state("zoomed")
+        self.largura_tela = self.root.winfo_screenwidth()
+        self.altura_tela = self.root.winfo_screenheight()
+
+        self.root.geometry(f"{int(self.largura_tela * 0.9)}x{int(self.altura_tela * 0.85)}")
+        self.root.minsize(850, 600)
         self.root.configure(bg="#0b3d0b")
 
         self.jogador = None
@@ -220,18 +226,18 @@ class InterfaceCassino:
         tk.Label(
             self.frame_conteudo,
             text="ESCOLHA SEU JOGO",
-            font=("Times New Roman", 24, "bold"),
+            font=("Times New Roman", 20, "bold"),
             bg="#145214",
             fg="gold"
-        ).pack(pady=20)
+        ).pack(pady=8)
 
         frame_madeira = tk.Frame(self.frame_conteudo, bg="#6b3e0a")
-        frame_madeira.pack(pady=20)
+        frame_madeira.pack(pady=8)
 
         frame_ouro = tk.Frame(frame_madeira, bg="#d4af37")
         frame_ouro.pack(padx=5, pady=5)
 
-        frame_jogos = tk.Frame(frame_ouro, bg="#000000", padx=30, pady=25)
+        frame_jogos = tk.Frame(frame_ouro, bg="#000000", padx=20, pady=14)
         frame_jogos.pack(padx=5, pady=5)
 
         jogos = [
@@ -241,40 +247,52 @@ class InterfaceCassino:
             ("🎲", "Bozó", self.tela_bozo),
         ]
 
+        altura_card = max(95, int(self.altura_tela * 0.13))
+        largura_card = max(120, int(self.largura_tela * 0.12))
+        fonte_icone = max(20, int(self.altura_tela * 0.035))
+
         for i, (icone, nome, comando) in enumerate(jogos):
-            card = tk.Frame(frame_jogos, bg="#145214", bd=3, relief="ridge")
-            card.grid(row=i // 2, column=i % 2, padx=15, pady=15)
+            card = tk.Frame(
+                frame_jogos,
+                bg="#145214",
+                bd=2,
+                relief="ridge",
+                width=largura_card,
+                height=altura_card
+            )
+            card.grid(row=i // 2, column=i % 2, padx=12, pady=8)
+            card.pack_propagate(False)
 
             tk.Label(
                 card,
                 text=icone,
-                font=("Arial", 34),
+                font=("Arial", fonte_icone),
                 bg="#145214",
                 fg="gold"
-            ).pack(pady=(12, 4))
+            ).pack(pady=(6, 2))
 
             tk.Label(
                 card,
                 text=nome,
-                font=("Arial", 14, "bold"),
+                font=("Arial", 10, "bold"),
                 bg="#145214",
                 fg="white"
-            ).pack(pady=4)
+            ).pack(pady=2)
 
             tk.Button(
                 card,
                 text="Jogar",
-                font=("Arial", 12, "bold"),
+                font=("Arial", 9, "bold"),
                 command=comando,
                 bg="#8b0000",
                 fg="white",
                 activebackground="#a00000",
                 activeforeground="white",
-                bd=3,
+                bd=2,
                 relief="raised",
                 cursor="hand2",
-                width=12
-            ).pack(pady=(8, 12))
+                width=10
+        ).pack(pady=(4, 6))
 
     def tela_menu_carteira(self):
         self.limpar_area()
